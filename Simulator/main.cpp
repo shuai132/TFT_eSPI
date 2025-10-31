@@ -1,3 +1,4 @@
+#include "JetBrainsMono_Bold_12.h"
 #include "TFT_eSPI.h"
 #include "render_sdl.h"
 
@@ -29,6 +30,12 @@ static void drawTest(TFT_eSprite &sprite) {
   sprite.fillRect(10, 150, 30, 30, TFT_WHITE);
   sprite.setTextColor(TFT_WHITE);
   sprite.drawString("WHITE", 50, 150);
+
+  // font
+  sprite.loadFont(JetBrainsMono_Bold_12);
+  sprite.setTextDatum(TL_DATUM);
+  sprite.setTextColor(TFT_WHITE, TFT_BLACK, true);
+  sprite.drawString("1234ABCD", 50, 200);
 }
 
 int main() {
