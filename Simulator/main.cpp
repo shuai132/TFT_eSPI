@@ -1,34 +1,31 @@
 #include "TFT_eSPI.h"
 #include "render_sdl.h"
 
-#define SCREEN_WIDTH 240
-#define SCREEN_HEIGHT 320
+#include "RingBuffer.hpp"
+#include "chart.h"
+#include "rpc_msg.h"
+#include "screen.h"
+#include "ui.h"
+#include "value.h"
+
+#define SCREEN_WIDTH 160
+#define SCREEN_HEIGHT 80
 #define SCREEN_SCALE 2
 #define SCREEN_BG TFT_BLACK
 
-static void drawTest(TFT_eSprite &sprite) {
-  // text size
-  sprite.setTextSize(3);
+InaMsg g_ina_current;
+USBMsg g_adc_current;
+float g_temperature;
 
-  // red
-  sprite.fillRect(10, 0, 30, 30, TFT_RED);
-  sprite.setTextColor(TFT_RED);
-  sprite.drawString("RED", 50, 0);
+TFT_eSPI g_tft = TFT_eSPI();
+TFT_eSprite g_spr(&g_tft);
+ScreenConfig g_screen_config;
+RingBuffer<InaMsg, UI_CHART_WIDTH> g_sensor_buffer;
 
-  // green
-  sprite.fillRect(10, 50, 30, 30, TFT_GREEN);
-  sprite.setTextColor(TFT_GREEN);
-  sprite.drawString("GREEN", 50, 50);
-
-  // blue
-  sprite.fillRect(10, 100, 30, 30, TFT_BLUE);
-  sprite.setTextColor(TFT_BLUE);
-  sprite.drawString("BLUE", 50, 100);
-
-  // white
-  sprite.fillRect(10, 150, 30, 30, TFT_WHITE);
-  sprite.setTextColor(TFT_WHITE);
-  sprite.drawString("WHITE", 50, 150);
+static void drawTest() {
+  g_spr.createSprite(SCREEN_WIDTH, SCREEN_HEIGHT);
+  ui_value_update();
+  ui_chart_update();
 }
 
 int main() {
@@ -37,24 +34,13 @@ int main() {
     return 1;
   }
 
-  TFT_eSPI tft = TFT_eSPI();
-  tft.init();
-
-  TFT_eSprite sprite = TFT_eSprite(&tft);
-  sprite.createSprite(SCREEN_WIDTH, SCREEN_HEIGHT);
-  sprite.fillSprite(SCREEN_BG);
-
   // test
-  drawTest(sprite);
+  drawTest();
 
   // update display
-  renderer.updateDisplay(&sprite, 0, 0);
+  renderer.updateDisplay(&g_spr, 0, 0);
 
   // run event loop
   SDLRenderer::runEventLoop();
-
-  // clean up
-  sprite.deleteSprite();
-
   return 0;
 }

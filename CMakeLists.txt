@@ -8,12 +8,25 @@ if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     add_compile_options(-Wno-non-c-typedef-for-linkage)
     add_compile_options(-Wno-int-to-pointer-cast)
 
+    message(STATUS "USBMETER_PATH: $ENV{USBMETER_PATH}")
+    set(USBMETER_PATH $ENV{USBMETER_PATH})
+
+    add_compile_definitions(SKU_USBMETER)
+    add_compile_definitions(SIMULATOR)
     include_directories(
             .
             Extensions
             Simulator
+            ${USBMETER_PATH}/src
+            ${USBMETER_PATH}/src/ui
+            ${USBMETER_PATH}/src/utils
+            ${USBMETER_PATH}/src/log
+            ${USBMETER_PATH}/lib/fronts
+            ${USBMETER_PATH}/lib/asio_net/include/asio_net/rpc_core/include
     )
     add_executable(simulator
+            ${USBMETER_PATH}/src/ui/chart.cpp
+            ${USBMETER_PATH}/src/ui/value.cpp
             Simulator/main.cpp
             Simulator/render_sdl.cpp
             Simulator/Arduino.cpp
